@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}modern-auth-page{% endblock %}
+
+{% block content %}
+<style>
+    .modern-auth-container {
+        min-height: calc(100vh - 90px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .modern-auth-card {
+        width: 100%;
+        max-width: 1050px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 28px;
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+    }
+
+    .modern-auth-left {
+        padding: 50px 40px;
+        background: #ffffff;
+    }
+
+    .modern-auth-left h2 {
+        color: #1e3a5f;
+        font-size: 24px;
+        margin-bottom: 6px;
+        font-weight: 800;
+    }
+
+    .modern-auth-left h1 {
+        color: #111827;
+        font-size: 34px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .security-note {
+        background: #eef2ff;
+        border: 1px solid #c7d2fe;
+        color: #3730a3;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        color: #374151;
+        margin-bottom: 7px;
+        font-weight: 700;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 15px;
+        border-radius: 14px;
+        border: 1px solid #d1d5db !important;
+        font-size: 14px;
+        outline: none;
+        transition: 0.3s ease;
+        background: #f9fafb !important;
+        color: #111827 !important;
+    }
+
+    .form-group input:focus {
+        border-color: #1e3a5f !important;
+        box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.12);
+        background: #ffffff !important;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        display: inline-block;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #1e3a5f, #274c77);
+        color: #ffffff;
+    }
+
+    .btn-secondary {
+        background: #eef2ff;
+        color: #1e3a5f;
+        margin-top: 10px;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        opacity: 0.96;
+    }
+
+    .auth-switch {
+        margin-top: 18px;
+        text-align: center;
+        color: #4b5563;
+        font-size: 14px;
+    }
+
+    .auth-switch a {
+        color: #1e3a5f;
+        text-decoration: none;
+        font-weight: 800;
+    }
+
+    .modern-auth-right {
+        background: linear-gradient(135deg, #1e3a5f, #274c77, #102841);
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modern-auth-right::before,
+    .modern-auth-right::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .modern-auth-right::before {
+        width: 220px;
+        height: 220px;
+        top: -60px;
+        right: -70px;
+    }
+
+    .modern-auth-right::after {
+        width: 180px;
+        height: 180px;
+        bottom: -50px;
+        left: -50px;
+    }
+
+    .modern-auth-right h2 {
+        font-size: 38px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .modern-auth-right p {
+        max-width: 360px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.92);
+        position: relative;
+        z-index: 2;
+    }
+
+    @media (max-width: 900px) {
+        .modern-auth-card {
+            grid-template-columns: 1fr;
+        }
+
+        .modern-auth-right {
+            min-height: 240px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .modern-auth-left,
+        .modern-auth-right {
+            padding: 30px 22px;
+        }
+
+        .modern-auth-left h1 {
+            font-size: 28px;
+        }
+
+        .modern-auth-right h2 {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<div class="modern-auth-container">
+    <div class="modern-auth-card">
+
+        <div class="modern-auth-left">
+            <h2>Welcome Home</h2>
+
+            {% if mfa_required %}
+                <h1>Admin Verification</h1>
+                <div class="security-note">
+                    A 6-digit verification code was sent to the admin email account.
+                    Enter the code below to continue.
+                </div>
+
+                <form method="POST" action="{% url 'verify_admin_otp' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Verification Code</label>
+                        {{ otp_form.code }}
+                    </div>
+                    <button type="submit" class="btn-primary">Verify Admin Login</button>
+                </form>
+            {% else %}
+                <h1>Login to your Account</h1>
+                <div class="security-note">
+                    This system uses secure login controls, email authorization, role-based access checks, and admin verification for added protection.
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        {{ form.password }}
+                    </div>
+
+                    <button type="submit" class="btn-primary">Login</button>
+
+                    <p class="auth-switch">
+                        <a href="{% url 'password_reset' %}">Forgot password?</a>
+                    </p>
+
+                    <p class="auth-switch">
+                        Don't have an account?
+                        <a href="{% url 'register' %}">Create account</a>
+                    </p>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="modern-auth-right">
+            <h2>Welcome Home</h2>
+            <p>Connecting You to the Perfect Place to Belong</p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

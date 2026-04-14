@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_class %}property-list-page{% endblock %}
+
+{% block content %}
+<style>
+    .property-list-page, body.property-list-page {
+        background: linear-gradient(135deg, #f8fafc, #eef2ff, #fdf2f8);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-header {
+        width: 92%; max-width: 1180px; margin: 30px auto 20px;
+        background: var(--surface); padding: 28px 30px; border-radius: 24px;
+        box-shadow: var(--shadow); border-left: 6px solid #8b5cf6;
+        border: 1px solid var(--border);
+    }
+
+    .page-header h1 { font-size: 34px; color: var(--text); margin-bottom: 8px; font-weight: 800; }
+    .page-header p { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+    .search-panel {
+        width: 92%; max-width: 1180px; margin: 0 auto 24px;
+        background: var(--surface); padding: 20px; border-radius: 20px;
+        box-shadow: var(--shadow); border: 1px solid var(--border);
+    }
+
+    .listing-search-form { display: flex; gap: 12px; flex-wrap: wrap; }
+    .listing-search-form input {
+        flex: 1; min-width: 220px; padding: 14px 16px; border-radius: 14px;
+        border: 1px solid var(--border); background: var(--input-bg); color: var(--text); outline: none;
+    }
+
+    .listing-search-form button {
+        padding: 14px 22px; border: none; border-radius: 14px;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #ffffff;
+        font-weight: 800; cursor: pointer; transition: 0.3s ease;
+    }
+
+    /* AI Specific Styles */
+    .ai-insight-box {
+        width: 92%; max-width: 1180px; margin: 0 auto 24px;
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border-left: 6px solid #22c55e; padding: 24px 30px; border-radius: 20px;
+        box-shadow: var(--shadow);
+    }
+    .ai-insight-box h4 { color: #166534; font-size: 20px; margin-bottom: 8px; font-weight: 800; }
+    .ai-insight-box p { color: #15803d; line-height: 1.6; font-size: 15px; }
+
+    .ai-example-badge {
+        background: #f3e8ff; color: #9333ea; padding: 4px 10px;
+        border-radius: 8px; font-size: 11px; font-weight: 800; margin-left: 5px;
+    }
+
+    .property-grid {
+        width: 92%; max-width: 1180px; margin: 0 auto 50px;
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px;
+    }
+
+    .property-card {
+        background: var(--surface); border-radius: 22px; overflow: hidden;
+        box-shadow: var(--shadow); border: 1px solid var(--border); transition: 0.3s ease;
+    }
+    .property-card:hover { transform: translateY(-6px); }
+    .property-card img { width: 100%; height: 220px; object-fit: cover; }
+    .property-card-body { padding: 20px; }
+
+    .property-type {
+        display: inline-block; background: var(--surface-2); color: #6d28d9;
+        padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; margin-bottom: 12px;
+    }
+    .price { color: #4f46e5; font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+    .card-btn {
+        display: block; text-align: center; text-decoration: none; padding: 11px 16px;
+        border-radius: 12px; font-weight: 800; background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: #ffffff;
+    }
+
+    @media (max-width: 768px) { .page-header, .search-panel, .property-grid, .ai-insight-box { width: 94%; } }
+
+    /* --- Mock Booking Modal Styles --- */
+    .mock-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .mock-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .mock-modal-box {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 24px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .mock-modal-overlay.active .mock-modal-box {
+        transform: translateY(0);
+    }
+
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #8b5cf6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
+<div class="page-header">
+    <h1>Available Rental Properties</h1>
+    <p>Browse properties that match your budget, location, and lifestyle.</p>
+</div>
+
+<div class="search-panel">
+    <form method="GET" class="listing-search-form">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; width: 100%;">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search location/title..." style="flex: 1; min-width: 250px;">
+            <button type="submit">Search</button>
+        </div>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; width: 100%;">
+            <select name="property_type" style="min-width: 140px; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                <option value="">All Types</option>
+                <option value="apartment" {% if property_type_filter == 'apartment' %}selected{% endif %}>Apartment</option>
+                <option value="condo" {% if property_type_filter == 'condo' %}selected{% endif %}>Condo</option>
+                <option value="bedspace" {% if property_type_filter == 'bedspace' %}selected{% endif %}>Bedspace</option>
+                <option value="house" {% if property_type_filter == 'house' %}selected{% endif %}>House</option>
+            </select>
+            
+            <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min Price" style="width: 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+            <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max Price" style="width: 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+            
+            <input type="text" name="amenities" value="{{ amenities_filter }}" placeholder="Amenities (wifi...)" style="min-width: 160px; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+            
+            <label style="display: flex; align-items: center; gap: 6px; padding: 12px 16px; background: var(--surface-2); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" name="available_only" {% if available_only %}checked{% endif %}> Available Only
+            </label>
+            
+            <a href="{% url 'property_list' %}" style="padding: 12px 20px; background: #6b7280; color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">Clear</a>
+        </div>
+    </form>
+    
+    {% if property_type_filter or min_price or max_price or amenities_filter or available_only %}
+    <div style="margin-top: 12px; padding: 12px; background: rgba(139,92,246,0.1); border-radius: 12px; border-left: 4px solid #8b5cf6;">
+        <strong>Active Filters:</strong>
+        {% if property_type_filter %}<span style="background: white; padding: 4px 10px; border-radius: 20px; margin-left: 8px;">{{ property_type_filter|title }}</span>{% endif %}
+        {% if min_price %}<span style="background: white; padding: 4px 10px; border-radius: 20px; margin-left: 8px;">Min ₱{{ min_price }}</span>{% endif %}
+        {% if max_price %}<span style="background: white; padding: 4px 10px; border-radius: 20px; margin-left: 8px;">Max ₱{{ max_price }}</span>{% endif %}
+        {% if amenities_filter %}<span style="background: white; padding: 4px 10px; border-radius: 20px; margin-left: 8px;">{{ amenities_filter }}</span>{% endif %}
+        {% if available_only %}<span style="background: white; padding: 4px 10px; border-radius: 20px; margin-left: 8px;">Available</span>{% endif %}
+        <a href="{% url 'property_list' %}" style="margin-left: 12px; color: #8b5cf6;">Clear All</a>
+    </div>
+    {% endif %}
+</div>
+
+{% if query and ai_guide %}
+    <div class="ai-insight-box">
+        <h4>✨ AI Guide for "{{ query }}"</h4>
+        <p>{{ ai_guide }}</p>
+    </div>
+{% endif %}
+
+{% if recommended_properties %}
+<div class="page-header" style="background: transparent; border: none; box-shadow: none; padding-left: 5px;">
+    <h3 style="color: #6366f1;">🏆 Recommended Properties</h3>
+</div>
+<div class="property-grid" style="margin-bottom: 40px;">
+    {% for prop in recommended_properties %}
+    <div class="property-card">
+        {% if prop.image %}<img src="{{ prop.image.url }}" alt="{{ prop.title }}">{% else %}<img src="{% static 'images/default-property.jpg' %}" alt="Property Image">{% endif %}
+        <div class="property-card-body">
+            <span class="property-type">{{ prop.get_property_type_display }}</span>
+            {% if prop.top_pick %}<span class="score-badge" style="background:#facc15; color:#111827;">⭐ Top Pick</span>{% endif %}
+            <h3>{{ prop.title }}</h3>
+            <p class="location">{{ prop.location }}</p>
+            <p class="price">₱{{ prop.price }}</p>
+            <a href="{% url 'property_detail' prop.id %}" class="card-btn">View Property</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-header" style="background: transparent; border: none; box-shadow: none; padding-left: 5px;">
+    <h3>🏠 Available in our Listings</h3>
+</div>
+<div class="property-grid">
+    {% for property in properties %}
+    <div class="property-card">
+        {% if property.image %}<img src="{{ property.image.url }}">
+        {% else %}<img src="{% static 'images/default-property.jpg' %}">{% endif %}
+        <div class="property-card-body">
+            <span class="property-type">{{ property.get_property_type_display }}</span>
+            {% if property.top_pick %}<span class="score-badge" style="background:#facc15; color:#111827;">⭐ Top Pick</span>{% endif %}
+            {% if property.recommendation_score %}<span class="score-badge">Score: {{ property.recommendation_score }}</span>{% endif %}
+            <h3>{{ property.title }}</h3>
+            <p class="location">{{ property.location }}</p>
+            <p class="price">₱{{ property.price }}</p>
+            <a href="{% url 'property_detail' property.id %}" class="card-btn">View Property</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-box">
+        <h3>No direct matches found</h3>
+        <p>Check the AI examples above for typical pricing in this area.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="mockModal" class="mock-modal-overlay">
+    <div class="mock-modal-box">
+        <div id="mockLoading">
+            <div class="loader"></div>
+            <h3 style="color: var(--text); font-weight: 800;">Contacting AI Landlord...</h3>
+            <p style="color: var(--muted); margin-top: 10px;">Simulating booking request.</p>
+        </div>
+        
+        <div id="mockSuccess" style="display: none;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
+            <h3 style="color: #10b981; font-weight: 800; margin-bottom: 10px;">Mock Booking Success!</h3>
+            <p style="color: var(--muted); line-height: 1.5; margin-bottom: 20px;">
+                You have successfully simulated a booking for:<br>
+                <strong id="mockPropertyName" style="color: var(--text);"></strong><br>
+                at <strong id="mockPropertyPrice" style="color: #8b5cf6;"></strong>
+            </p>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">*Note: This is an AI example and no real charges were made.*</p>
+            <button id="closeModalBtn" class="card-btn" style="width: 100%; border: none; cursor: pointer;">Awesome!</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = document.getElementById('mockModal');
+        const loadingDiv = document.getElementById('mockLoading');
+        const successDiv = document.getElementById('mockSuccess');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const propNameSpan = document.getElementById('mockPropertyName');
+        const propPriceSpan = document.getElementById('mockPropertyPrice');
+
+        // Listen for clicks on all mock booking buttons
+        document.querySelectorAll('.mock-book-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get the data from the button we clicked
+                const title = this.getAttribute('data-title');
+                const price = this.getAttribute('data-price');
+                
+                // Set the text in the success screen
+                propNameSpan.textContent = title;
+                propPriceSpan.textContent = price;
+                
+                // Reset and show the modal
+                loadingDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                modal.classList.add('active');
+                
+                // Simulate a 2-second network delay to make it feel real
+                setTimeout(() => {
+                    loadingDiv.style.display = 'none';
+                    successDiv.style.display = 'block';
+                }, 2000);
+            });
+        });
+
+        // Close the modal
+        closeBtn.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+    });
+</script>
+
+{% endblock %}

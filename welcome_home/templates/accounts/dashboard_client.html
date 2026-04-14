@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}client-body{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-layout {
+        display: flex;
+        min-height: calc(100vh - 120px);
+        gap: 24px;
+    }
+
+    .sidebar {
+        width: 270px;
+        background: var(--sidebar-bg);
+        border-radius: 24px;
+        padding: 24px 18px;
+        box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+        color: var(--sidebar-text);
+        font-size: 28px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: var(--sidebar-text);
+        background: var(--sidebar-link);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: var(--sidebar-active);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    .dashboard-main {
+        flex: 1;
+    }
+
+    .dashboard-header {
+        background: var(--surface);
+        color: var(--text);
+        padding: 28px;
+        border-radius: 22px;
+        margin-bottom: 24px;
+        border-left: 6px solid #8b5cf6;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .dashboard-header h1 {
+        font-size: 34px;
+        margin-bottom: 8px;
+        color: var(--text);
+    }
+
+    .dashboard-header p {
+        color: var(--muted);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .stat-card h3 {
+        color: var(--muted);
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .stat-card h2 {
+        font-size: 32px;
+        color: var(--text);
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .panel {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .panel h3 {
+        margin-bottom: 16px;
+        color: var(--text);
+        font-size: 22px;
+    }
+
+    .item {
+        background: var(--surface-2);
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+    }
+
+    .item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--text);
+    }
+
+    .item span {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.16);
+        color: #b45309;
+    }
+
+    .status-accepted {
+        background: rgba(34, 197, 94, 0.14);
+        color: #15803d;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        text-decoration: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: var(--surface-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+    }
+
+    .recommend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+    }
+
+    .recommend-card {
+        background: var(--surface);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .recommend-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .recommend-body {
+        padding: 16px;
+    }
+
+    .recommend-body h4 {
+        color: var(--text);
+        margin-bottom: 6px;
+        font-size: 18px;
+    }
+
+    .recommend-body p {
+        color: var(--muted);
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .recommend-price {
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 12px;
+    }
+
+    .empty-text {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    @media (max-width: 992px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+        }
+        .top-pick {
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+    }
+</style>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h2>My Home</h2>
+        <a href="{% url 'dashboard_client' %}" class="active">Dashboard</a>
+        <a href="{% url 'property_list' %}">Browse Rentals</a>
+        <a href="{% url 'client_saved' %}">Saved Properties</a>
+        <a href="{% url 'renter_bookings' %}">Bookings</a>
+        <a href="{% url 'client_messages' %}">Messages</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'client_settings' %}">Settings</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Client Dashboard</h1>
+            <p>Discover rental spaces, manage your saved listings, and track your booking requests.</p>
+
+            <div class="hero-actions">
+                <a href="{% url 'property_list' %}" class="btn-primary">Browse Rentals</a>
+                <a href="{% url 'client_saved' %}" class="btn-secondary">Saved Properties</a>
+                <a href="{% url 'renter_bookings' %}" class="btn-secondary">My Bookings</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Saved Properties</h3>
+                <h2>{{ saved_count }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Bookings</h3>
+                <h2>{{ total_bookings }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <h3>Pending Bookings</h3>
+                <h2>{{ pending_bookings }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <h3>Accepted Bookings</h3>
+                <h2>{{ accepted_bookings }}</h2>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="panel">
+                <h3>Recent Booking Activity</h3>
+
+                {% for booking in recent_bookings %}
+                    <div class="item">
+                        <strong>{{ booking.property.title }}</strong>
+                        <span>Move-in: {{ booking.move_in_date }}</span><br>
+
+                        {% if booking.status == 'accepted' %}
+                            <span class="status-pill status-accepted">Accepted</span>
+                        {% else %}
+                            <span class="status-pill status-pending">{{ booking.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="empty-text">No recent bookings yet.</p>
+                {% endfor %}
+            </div>
+
+            <div class="panel">
+                <h3>Quick Reminders</h3>
+
+                <div class="item">
+                    <strong>Check your saved listings</strong>
+                    <span>Compare properties you want to review later.</span>
+                </div>
+
+                <div class="item">
+                    <strong>Track booking updates</strong>
+                    <span>Watch for accepted, rejected, or rescheduled requests.</span>
+                </div>
+
+                <div class="item">
+                    <strong>Stay connected</strong>
+                    <span>Use the Messages page for future landlord communication.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Recommended Properties</h3>
+
+            <div class="recommend-grid">
+                {% for property in recommendations %}
+                    <div class="recommend-card">
+                        {% if property.image %}
+                            <img src="{{ property.image.url }}" alt="{{ property.title }}">
+                        {% else %}
+                            <img src="{% static 'images/default-property.jpg' %}" alt="Default Property Image">
+                        {% endif %}
+
+                        <div class="recommend-body">
+                            <h4>{{ property.title }}</h4>
+                            <p>{{ property.location }}</p>
+                            <p class="recommend-price">₱{{ property.price }}</p>
+                            <a href="{% url 'property_detail' property.pk %}" class="btn-primary">View Details</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="empty-text">No recommendations available yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

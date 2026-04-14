@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}landlord-body{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-layout {
+        display: flex;
+        gap: 24px;
+        min-height: calc(100vh - 120px);
+    }
+
+    .sidebar {
+        width: 270px;
+        background: var(--sidebar-bg);
+        border-radius: 24px;
+        padding: 24px 18px;
+        box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+        color: var(--sidebar-text);
+        font-size: 28px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: var(--sidebar-text);
+        background: var(--sidebar-link);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: var(--sidebar-active);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    .dashboard-main {
+        flex: 1;
+    }
+
+    .dashboard-header {
+        background: var(--surface);
+        color: var(--text);
+        padding: 28px;
+        border-radius: 22px;
+        margin-bottom: 24px;
+        border-left: 6px solid #8b5cf6;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-header p {
+        color: var(--muted);
+    }
+
+    .form-card {
+        background: var(--surface);
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .form-card form p {
+        margin-bottom: 16px;
+    }
+
+    .form-card label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .form-card input,
+    .form-card textarea,
+    .form-card select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text);
+    }
+
+    .form-actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        text-decoration: none;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: var(--surface-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h2>Landlord Panel</h2>
+        <a href="{% url 'dashboard_landlord' %}">Dashboard</a>
+        <a href="{% url 'landlord_properties' %}">Properties</a>
+        <a href="{% url 'landlord_tenants' %}">Tenants</a>
+        <a href="{% url 'landlord_messages' %}">Messages</a>
+        <a href="{% url 'landlord_settings' %}">Settings</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Add New Property</h1>
+            <p>Create a new rental listing for your property.</p>
+        </div>
+
+        <div class="form-card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Property</button>
+                    <a href="{% url 'landlord_properties' %}" class="btn-secondary">Back to Properties</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

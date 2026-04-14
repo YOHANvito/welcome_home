@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="dashboard-layout">
+    <div class="dashboard-main">
+        <div class="card">
+            <h1>Saved Properties</h1>
+            <p>Review the rentals you saved for later.</p>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            {% if properties %}
+                <div class="property-grid">
+                    {% for property in properties %}
+                    <div class="property-card">
+                        {% if property.image %}
+                            <img src="{{ property.image.url }}" class="property-image" alt="{{ property.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?q=80&w=1200" class="property-image" alt="{{ property.title }}">
+                        {% endif %}
+
+                        <div class="property-content">
+                            <span class="property-type">{{ property.get_property_type_display }}</span>
+                            <h3 class="property-title">{{ property.title }}</h3>
+                            <p class="property-location">{{ property.location }}</p>
+                            <p class="property-price">₱{{ property.price }}</p>
+                            <p class="property-desc">{{ property.description|truncatewords:15 }}</p>
+
+                            <div class="property-actions">
+                                <a href="{% url 'property_detail' property.id %}" class="btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align:center; padding: 40px 20px;">
+                    <h2>No saved properties yet</h2>
+                    <p>Start browsing rentals and save the ones you like.</p>
+                    <a href="{% url 'property_list' %}" class="btn-primary">Browse Rentals</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,657 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_class %}property-detail-page{% endblock %}
+
+{% block content %}
+
+<style>
+.property-detail-page {
+    background: linear-gradient(135deg, #f5f7ff, #eef2ff, #fdf2f8);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    padding: 30px;
+}
+
+.detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-image-box img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.detail-no-image {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+/* Lightbox Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
+  animation: fadeIn 0.3s;
+}
+
+.modal-content {
+  position: relative;
+  margin: auto;
+  display: block;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.clickable-image:hover {
+  opacity: 0.8;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@media (max-width: 992px) {
+  .modal-content {
+    width: 95%;
+  }
+}
+
+.gallery-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.gallery-strip img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: #fff;
+}
+
+.detail-info-card {
+    background: var(--surface);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.property-type {
+    background: #6366f1;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.detail-info-card h1 {
+    margin-top: 10px;
+    color: var(--text);
+}
+
+.price {
+    color: #6366f1;
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.detail-section {
+    margin-top: 20px;
+}
+
+.tag-pill {
+    background: var(--surface-2);
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    display: inline-block;
+    margin: 4px 6px 0 0;
+    border: 1px solid var(--border);
+}
+
+.detail-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.side-card {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg,#8b5cf6,#6366f1);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+}
+
+.btn-secondary {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+}
+
+.full-btn {
+    width: 100%;
+}
+
+.comment-wrapper,
+.recommend-wrapper {
+    margin: 20px;
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.comment-card {
+    padding: 15px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid var(--border);
+}
+
+.comment-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.empty-text {
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+.recommend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.recommend-card {
+    background: var(--surface-2);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.recommend-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.recommend-body {
+    padding: 16px;
+}
+
+.recommend-body h4 {
+    color: var(--text);
+    margin-bottom: 6px;
+    font-size: 18px;
+}
+
+.recommend-body p {
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.recommend-price {
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.reason-box {
+    background: rgba(139, 92, 246, 0.10);
+    border: 1px solid rgba(139, 92, 246, 0.18);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.score-badge {
+    display: inline-block;
+    background: #8b5cf6;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+    margin-right: 6px;
+}
+
+.level-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.level-high {
+    background: rgba(34, 197, 94, 0.14);
+    color: #15803d;
+}
+
+.level-medium {
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+.level-low {
+    background: rgba(59, 130, 246, 0.14);
+    color: #1d4ed8;
+}
+
+@media (max-width: 992px) {
+    .detail-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--input-bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.side-card form button {
+    margin-top: 8px;
+}
+</style>
+
+<div class="detail-layout">
+
+    <div class="detail-main">
+
+        <div class="detail-image-box">
+            {% if property.image %}
+                <img src="{{ property.image.url }}" alt="{{ property.title }}" class="clickable-image main-image" onclick="openModal(this)" style="cursor: pointer;" data-fullsrc="{{ property.image.url }}">
+            {% else %}
+                <img src="{% static 'images/default-property.jpg' %}" class="detail-no-image" alt="Default Property">
+            {% endif %}
+        </div>
+
+        {% if property.gallery_images.all %}
+        <div class="gallery-strip">
+            {% for photo in property.gallery_images.all %}
+                <img src="{{ photo.image.url }}" alt="Gallery image" class="clickable-image gallery-thumb" onclick="openModal(this)" style="cursor: pointer;" data-fullsrc="{{ photo.image.url }}">
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="detail-info-card">
+
+            <span class="property-type">{{ property.get_property_type_display }}</span>
+
+            <h1>{{ property.title }}</h1>
+            <p>{{ property.location }}</p>
+            <h2 class="price">₱{{ property.price }}</h2>
+
+            <div class="detail-section">
+                <h3>Description</h3>
+                <p>{{ property.description }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h3>Amenities</h3>
+                <p>{{ property.amenities }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h3>Tags</h3>
+                {% for tag in property.tags.all %}
+                    <span class="tag-pill">{{ tag.name }}</span>
+                {% empty %}
+                    <p class="empty-text">No tags available.</p>
+                {% endfor %}
+            </div>
+
+            <div class="detail-section">
+                <h3>Property Location</h3>
+                <iframe
+                    width="100%"
+                    height="300"
+                    style="border:0;border-radius:10px"
+                    src="https://www.google.com/maps?q={{ property.location }}&output=embed">
+                </iframe>
+            </div>
+
+            {% if property.latitude and property.longitude %}
+            <div class="detail-section">
+                <h3>Distance</h3>
+                <button onclick="getDistance()" class="btn-primary">Check Distance</button>
+                <p id="distance"></p>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="detail-side">
+
+        {% if user.is_authenticated and user.role == 'renter' %}
+        <div class="side-card">
+            <h3>Quick Actions</h3>
+
+            <div class="action-stack">
+                {% if is_saved %}
+                    <a href="{% url 'unsave_property' property.pk %}" class="btn-danger full-btn">
+                        Remove from Saved
+                    </a>
+                {% else %}
+                    <a href="{% url 'save_property' property.pk %}" class="btn-secondary full-btn">
+                        Save Property
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'message_landlord' property.pk %}" class="btn-primary full-btn">
+                    Message Landlord
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user.role == 'renter' %}
+        <div class="side-card">
+            <h3>Reserve</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ booking_form.move_in_date.id_for_label }}">Move-in Date</label>
+                    {{ booking_form.move_in_date }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ booking_form.message.id_for_label }}">Message (Optional)</label>
+                    {{ booking_form.message }}
+                </div>
+                <button type="submit" name="booking_submit" class="btn-primary full-btn">
+                    Reserve
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <div class="side-card">
+            <h3>Comment</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ comment_form.content.id_for_label }}">Your Comment</label>
+                    {{ comment_form.content }}
+                </div>
+                <button type="submit" name="comment_submit" class="btn-secondary full-btn">
+                    Post Comment
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user.role == 'landlord' %}
+        <div class="side-card">
+            <h3>Landlord</h3>
+            <a href="{% url 'dashboard_landlord' %}" class="btn-secondary full-btn">
+                Dashboard
+            </a>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user.role == 'admin' %}
+        <div class="side-card">
+            <h3>Admin</h3>
+            <a href="{% url 'dashboard_admin' %}" class="btn-secondary full-btn">
+                Dashboard
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- Image Lightbox Modal -->
+<div id="imageModal" class="modal">
+  <span class="close" onclick="closeModal()">&amp;times;</span>
+  <img class="modal-content" id="modalImage">
+</div>
+
+<div class="comment-wrapper">
+    <h2>Comments</h2>
+
+    {% for comment in comments %}
+    <div class="comment-card">
+        <div class="comment-top">
+            <strong>{{ comment.user.username }}</strong>
+            <span>{{ comment.created_at|date:"M d, Y h:i A" }}</span>
+        </div>
+        <p>{{ comment.content }}</p>
+    </div>
+    {% empty %}
+    <p class="empty-text">No comments yet.</p>
+    {% endfor %}
+</div>
+
+<div class="recommend-wrapper">
+    <h2>AI Recommended Properties</h2>
+    <p class="empty-text">Recommended based on smart matching of location, type, price, tags, and amenities.</p>
+
+    <div class="recommend-grid">
+        {% for item in similar_properties %}
+        <div class="recommend-card">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}">
+            {% else %}
+                <img src="{% static 'images/default-property.jpg' %}" alt="Default Property Image">
+            {% endif %}
+
+            <div class="recommend-body">
+                <span class="score-badge">Match Score: {{ item.recommendation_score }}</span>
+
+                {% if item.recommendation_level == "High Match" %}
+                    <span class="level-badge level-high">{{ item.recommendation_level }}</span>
+                {% elif item.recommendation_level == "Medium Match" %}
+                    <span class="level-badge level-medium">{{ item.recommendation_level }}</span>
+                {% else %}
+                    <span class="level-badge level-low">{{ item.recommendation_level }}</span>
+                {% endif %}
+
+                <h4>{{ item.title }}</h4>
+                <p>{{ item.location }}</p>
+                <p class="recommend-price">₱{{ item.price }}</p>
+
+                <div class="reason-box">
+                    <strong>Why recommended:</strong><br>
+                    {{ item.recommendation_reason }}
+                </div>
+
+                <a href="{% url 'property_detail' item.pk %}" class="btn-primary">View Property</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="empty-text">No recommended properties available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% if property.latitude and property.longitude %}
+<script>
+function getDistance() {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        let userLat = pos.coords.latitude
+        let userLng = pos.coords.longitude
+
+        let propLat = parseFloat("{{ property.latitude|default:'0' }}")
+        let propLng = parseFloat("{{ property.longitude|default:'0' }}")
+
+        let R = 6371
+        let dLat = (propLat - userLat) * Math.PI / 180
+        let dLng = (propLng - userLng) * Math.PI / 180
+
+        let a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(userLat * Math.PI / 180) *
+            Math.cos(propLat * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2)
+
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        let d = R * c
+
+        document.getElementById("distance").innerHTML =
+            "Distance : " + d.toFixed(2) + " KM"
+    })
+}
+</script>
+{% endif %}
+
+<script>
+function openModal(img) {
+  var modal = document.getElementById('imageModal');
+  var modalImg = document.getElementById('modalImage');
+  modal.style.display = 'block';
+  modalImg.src = img.getAttribute('data-fullsrc');
+}
+
+function closeModal() {
+  var modal = document.getElementById('imageModal');
+  modal.style.display = 'none';
+}
+
+// Close modal when clicking outside image
+window.onclick = function(event) {
+  var modal = document.getElementById('imageModal');
+  if (event.target == modal) {
+    closeModal();
+  }
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+});
+</script>
+
+{% endblock %}

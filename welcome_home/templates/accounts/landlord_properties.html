@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}landlord-body{% endblock %}
+
+{% block content %}
+<style>
+.dashboard-layout {
+    display: flex;
+    gap: 24px;
+    min-height: calc(100vh - 120px);
+    align-items: stretch;
+}
+
+.sidebar {
+    width: 270px;
+    min-height: calc(100vh - 120px);
+    background: var(--sidebar-bg);
+    border-radius: 24px;
+    padding: 24px 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: var(--sidebar-text);
+    font-size: 28px;
+    margin-bottom: 24px;
+    font-weight: 800;
+}
+
+.sidebar a {
+    display: block;
+    text-decoration: none;
+    color: var(--sidebar-text);
+    background: var(--sidebar-link);
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    transition: 0.3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: var(--sidebar-active);
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.sidebar .logout-link {
+    margin-top: auto;
+}
+
+.dashboard-main {
+    flex: 1;
+}
+
+.dashboard-header {
+    background: var(--surface);
+    color: var(--text);
+    padding: 28px;
+    border-radius: 22px;
+    margin-bottom: 24px;
+    border-left: 6px solid #8b5cf6;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.dashboard-header h1 {
+    font-size: 32px;
+    margin-bottom: 6px;
+}
+
+.dashboard-header p {
+    color: var(--muted);
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.property-card {
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.property-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.property-body {
+    padding: 18px;
+}
+
+.property-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.property-location {
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.property-price {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: var(--text);
+}
+
+.property-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-edit {
+    background: #6366f1;
+    color: white;
+}
+
+.btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-add {
+    background: #10b981;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-block;
+    transition: 0.3s ease;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+}
+
+.top-actions {
+    margin-bottom: 20px;
+}
+
+.empty-text {
+    color: var(--muted);
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .sidebar .logout-link {
+        margin-top: 0;
+    }
+}
+</style>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <h2>Landlord Panel</h2>
+
+        <a href="{% url 'dashboard_landlord' %}">Dashboard</a>
+        <a href="{% url 'landlord_properties' %}" class="active">Properties</a>
+        <a href="{% url 'landlord_tenants' %}">Tenants</a>
+        <a href="{% url 'landlord_messages' %}">Messages</a>
+        <a href="{% url 'landlord_settings' %}">Settings</a>
+        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-header">
+            <h1>My Properties</h1>
+            <p>Manage your property listings</p>
+        </div>
+
+        <div class="top-actions">
+            <a href="{% url 'property_create' %}" class="btn-add">
+                + Add New Property
+            </a>
+        </div>
+
+        <div class="properties-grid">
+
+            {% for property in properties %}
+            <div class="property-card">
+
+                {% if property.image %}
+                    <img src="{{ property.image.url }}" alt="{{ property.title }}">
+                {% else %}
+                    <img src="{% static 'images/default-property.jpg' %}" alt="Default Property Image">
+                {% endif %}
+
+                <div class="property-body">
+
+                    <div class="property-title">
+                        {{ property.title }}
+                    </div>
+
+                    <div class="property-location">
+                        {{ property.location }}
+                    </div>
+
+                    <div class="property-price">
+                        ₱{{ property.price }}
+                    </div>
+
+                    <div class="property-actions">
+                        <a href="{% url 'property_edit' property.id %}" class="btn btn-edit">
+                            Edit
+                        </a>
+
+                        <a href="{% url 'property_detail' property.id %}" class="btn btn-edit">
+                            View
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            {% empty %}
+                <p class="empty-text">No properties yet.</p>
+            {% endfor %}
+
+        </div>
+
+    </main>
+</div>
+
+{% endblock %}

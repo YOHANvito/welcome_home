@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}client-body{% endblock %}
+
+{% block content %}
+<style>
+    .messages-layout {
+        display: flex;
+        min-height: calc(100vh - 120px);
+        gap: 24px;
+    }
+
+    .sidebar {
+        width: 270px;
+        background: linear-gradient(180deg, #7c3aed, #4f46e5);
+        border-radius: 24px;
+        padding: 24px 18px;
+        box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+        color: #ffffff;
+        font-size: 30px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: #ffffff;
+        background: rgba(255,255,255,0.12);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: rgba(255,255,255,0.25);
+        transform: translateX(4px);
+    }
+
+    .messages-main {
+        flex: 1;
+    }
+
+    .messages-header {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--shadow);
+        padding: 28px;
+        border-radius: 22px;
+        margin-bottom: 24px;
+        border-left: 6px solid #8b5cf6;
+    }
+
+    .messages-header h1 {
+        font-size: 34px;
+        color: #6d28d9;
+        margin-bottom: 8px;
+    }
+
+    .messages-header p {
+        color: var(--muted);
+    }
+
+    .messages-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 20px;
+    }
+
+    .panel {
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: var(--shadow);
+    }
+
+    .panel h3 {
+        color: #6d28d9;
+        margin-bottom: 16px;
+        font-size: 24px;
+    }
+
+    .conversation-item {
+        background: var(--surface-2);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-left: 4px solid #8b5cf6;
+    }
+
+    .conversation-item strong {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .conversation-item span {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .chat-placeholder {
+        background: linear-gradient(135deg, #faf5ff, #ffffff);
+        border: 1px solid #ede9fe;
+        border-radius: 18px;
+        padding: 24px;
+        min-height: 320px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .chat-placeholder h4 {
+        font-size: 24px;
+        color: #5b21b6;
+        margin-bottom: 10px;
+    }
+
+    .chat-placeholder p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        text-decoration: none;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: #6366f1;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #111827;
+    }
+
+    .quick-actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 992px) {
+        .messages-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .messages-layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="messages-layout">
+    <aside class="sidebar">
+        <h2>My Home</h2>
+        <a href="{% url 'dashboard_client' %}">Dashboard</a>
+        <a href="{% url 'property_list' %}">Browse Rentals</a>
+        <a href="{% url 'client_saved' %}">Saved Properties</a>
+        <a href="{% url 'renter_bookings' %}">Bookings</a>
+        <a href="{% url 'client_messages' %}" class="active">Messages</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'client_settings' %}">Settings</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <main class="messages-main">
+        <div class="messages-header">
+            <h1>Messages</h1>
+            <p>Communicate with landlords and manage your rental inquiries.</p>
+        </div>
+
+        <div class="messages-grid">
+            <div class="panel">
+                <h3>Recent Conversations</h3>
+
+                <div class="conversation-item">
+                    <strong>Blue Haven Apartment</strong>
+                    <span>Landlord conversation will appear here once chat is connected.</span>
+                </div>
+
+                <div class="conversation-item">
+                    <strong>City Nest Studio</strong>
+                    <span>You will be able to track questions, replies, and updates here.</span>
+                </div>
+
+                <div class="conversation-item">
+                    <strong>Golden Heights Unit</strong>
+                    <span>This section is ready for your real-time chat feature.</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Chat Area</h3>
+
+                <div class="chat-placeholder">
+                    <h4>No active conversation yet</h4>
+                    <p>This page is ready for your Django real-time chat integration.</p>
+                    <p>Once your <strong>chatapp</strong> is connected, renter and landlord messages can appear here.</p>
+
+                    <div class="quick-actions">
+                        <a href="{% url 'property_list' %}" class="btn-primary">Browse Rentals</a>
+                        <a href="{% url 'dashboard_client' %}" class="btn-secondary">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

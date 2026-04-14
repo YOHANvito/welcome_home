@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block body_class %}dashboard-page{% endblock %}
+{% load static %}
+
+{% block content %}
+<style>
+    .dashboard-page,
+    body.dashboard-page {
+        background: linear-gradient(135deg, #eef2ff, #f8fafc, #fdf2f8);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .chat-shell {
+        width: 92%;
+        max-width: 1180px;
+        margin: 30px auto 50px;
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, #ffffff, #eef2ff, #f5f3ff);
+        padding: 30px;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(99, 102, 241, 0.09);
+        margin-bottom: 20px;
+        border-left: 6px solid #8b5cf6;
+    }
+
+    .section-chip {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .chat-header h1 {
+        font-size: 34px;
+        color: #5b21b6;
+        margin-bottom: 8px;
+        font-weight: 800;
+    }
+
+    .chat-header p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .chat-toolbar {
+        margin-bottom: 18px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 12px;
+        font-weight: 800;
+        transition: 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        opacity: 0.96;
+    }
+
+    .btn-secondary {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .btn-secondary:hover {
+        background: #ddd6fe;
+        transform: translateY(-2px);
+    }
+
+    .chat-intro-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 12px 24px rgba(139, 92, 246, 0.08);
+        margin-bottom: 20px;
+    }
+
+    .chat-intro-card h2 {
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .chat-intro-card p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .chat-room-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .chat-room-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 12px 24px rgba(139, 92, 246, 0.07);
+        border: 1px solid #ede9fe;
+        transition: 0.3s ease;
+    }
+
+    .chat-room-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .clean-chat-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .clean-chat-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .chat-room-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: #ffffff;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.18);
+    }
+
+    .clean-chat-text h3 {
+        color: #1f2937;
+        font-size: 21px;
+        margin-bottom: 4px;
+        font-weight: 800;
+    }
+
+    .clean-chat-text p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .empty-box {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 24px;
+        text-align: center;
+        color: #6b7280;
+        box-shadow: 0 10px 22px rgba(139, 92, 246, 0.07);
+    }
+
+    @media (max-width: 768px) {
+        .chat-shell {
+            width: 94%;
+        }
+
+        .chat-header h1 {
+            font-size: 28px;
+        }
+
+        .clean-chat-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="chat-shell">
+    <div class="chat-header">
+        <span class="section-chip">Messaging</span>
+        <h1>Chat Inbox</h1>
+        <p>Communicate with landlords and renters in one place.</p>
+    </div>
+
+    <div class="chat-toolbar">
+        <a href="{% url 'create_room' %}" class="btn-primary">Create General Room</a>
+    </div>
+
+    <div class="chat-intro-card">
+        <h2>Inbox Menu</h2>
+        <p>View available rooms and continue conversations.</p>
+    </div>
+
+    <div class="chat-room-list">
+        {% for room in rooms %}
+        <div class="chat-room-card clean-chat-card">
+            <div class="clean-chat-left">
+                <div class="chat-room-icon">💬</div>
+
+                <div class="clean-chat-text">
+                    <h3>{{ room.name }}</h3>
+                    <p>Continue this conversation.</p>
+                </div>
+            </div>
+
+            <div class="clean-chat-right">
+                <a href="{% url 'chat_room' room.id %}" class="btn-secondary">Open</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-box">
+            <p>No chat rooms yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

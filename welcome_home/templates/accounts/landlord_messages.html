@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}landlord-body{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-layout {
+        display: flex;
+        gap: 24px;
+        min-height: calc(100vh - 120px);
+        align-items: stretch;
+    }
+
+    .sidebar {
+        width: 270px;
+        min-height: calc(100vh - 120px);
+        background: var(--sidebar-bg);
+        border-radius: 24px;
+        padding: 24px 18px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar h2 {
+        color: var(--sidebar-text);
+        font-size: 28px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: var(--sidebar-text);
+        background: var(--sidebar-link);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: var(--sidebar-active);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    .sidebar .logout-link {
+        margin-top: auto;
+    }
+
+    .dashboard-main {
+        flex: 1;
+    }
+
+    .page-box {
+        background: var(--surface);
+        padding: 30px;
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .page-box h1 {
+        font-size: 34px;
+        margin-bottom: 10px;
+        color: var(--text);
+    }
+
+    .page-box p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 18px;
+    }
+
+    .message-sample {
+        background: var(--surface-2);
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 14px;
+        border: 1px solid var(--border);
+    }
+
+    .message-sample strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+    }
+
+    .message-sample span {
+        color: var(--muted);
+        font-size: 13px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .empty-box {
+        background: var(--surface-2);
+        border-radius: 16px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-layout {
+            flex-direction: column;
+            min-height: auto;
+        }
+
+        .sidebar {
+            width: 100%;
+            min-height: auto;
+        }
+
+        .sidebar .logout-link {
+            margin-top: 0;
+        }
+    }
+</style>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h2>Landlord Panel</h2>
+        <a href="{% url 'dashboard_landlord' %}">Dashboard</a>
+        <a href="{% url 'landlord_properties' %}">Properties</a>
+        <a href="{% url 'landlord_tenants' %}">Tenants</a>
+        <a href="{% url 'landlord_messages' %}" class="active">Messages</a>
+        <a href="{% url 'landlord_settings' %}">Settings</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="page-box">
+            <h1>Landlord Messages</h1>
+            <p>View renter inquiries and communication previews here.</p>
+
+            <div class="message-sample">
+                <strong>From: Juan Dela Cruz</strong>
+                <span>2 hours ago</span>
+                Hi, is the apartment still available for viewing this weekend?
+            </div>
+
+            <div class="message-sample">
+                <strong>From: Maria Santos</strong>
+                <span>Yesterday</span>
+                I would like to ask if utilities are already included in the monthly rate.
+            </div>
+
+            <div class="message-sample">
+                <strong>From: Carlo Reyes</strong>
+                <span>2 days ago</span>
+                Thank you. I’m interested in booking the room near España.
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

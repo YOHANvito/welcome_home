@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}chat-page{% endblock %}
+
+{% block content %}
+<style>
+    .chat-page,
+    body.chat-page {
+        background: linear-gradient(135deg, #eef2ff, #f8fafc, #fdf2f8);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .chat-home-wrap {
+        width: 92%;
+        max-width: 1200px;
+        margin: 30px auto 50px;
+    }
+
+    .chat-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        background: linear-gradient(135deg, #ffffff, #eef2ff, #f5f3ff);
+        padding: 34px;
+        border-radius: 26px;
+        box-shadow: 0 14px 34px rgba(99, 102, 241, 0.10);
+        margin-bottom: 26px;
+    }
+
+    .chat-hero-text h1 {
+        font-size: 36px;
+        color: #4338ca;
+        margin-bottom: 10px;
+        font-weight: 800;
+    }
+
+    .chat-hero-text p {
+        color: #6b7280;
+        max-width: 700px;
+        line-height: 1.7;
+        font-size: 15px;
+    }
+
+    .chat-chip {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .chat-hero-box {
+        min-width: 120px;
+        min-height: 120px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        box-shadow: 0 12px 28px rgba(99, 102, 241, 0.22);
+    }
+
+    .chat-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .chat-feature-card {
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: 0 12px 28px rgba(139, 92, 246, 0.08);
+        border-top: 4px solid #8b5cf6;
+        transition: 0.3s ease;
+    }
+
+    .chat-feature-card:hover {
+        transform: translateY(-6px);
+    }
+
+    .chat-feature-card h3 {
+        font-size: 22px;
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-weight: 800;
+    }
+
+    .chat-feature-card p {
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 12px;
+        font-weight: 800;
+        transition: 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        opacity: 0.96;
+    }
+
+    .btn-secondary {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .btn-secondary:hover {
+        background: #ddd6fe;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .chat-home-wrap {
+            width: 94%;
+        }
+
+        .chat-hero {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 24px;
+        }
+
+        .chat-hero-text h1 {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<div class="chat-home-wrap">
+    <section class="chat-hero">
+        <div class="chat-hero-text">
+            <span class="chat-chip">Messaging Center</span>
+            <h1>Stay connected with renters and landlords</h1>
+            <p>Use the chat system to ask questions, follow up on bookings, discuss rental details, and keep your conversations organized in one place.</p>
+        </div>
+        <div class="chat-hero-box">💬</div>
+    </section>
+
+    <div class="chat-feature-grid">
+        <div class="chat-feature-card">
+            <h3>Open Inbox</h3>
+            <p>See all available chat rooms and continue your ongoing conversations with ease.</p>
+            <a href="{% url 'chat_inbox' %}" class="btn-primary">Go to Inbox</a>
+        </div>
+
+        <div class="chat-feature-card">
+            <h3>Create Room</h3>
+            <p>Start a general chat room for rental concerns, booking follow-ups, or property concerns.</p>
+            <a href="{% url 'create_room' %}" class="btn-secondary">Create Room</a>
+        </div>
+
+        <div class="chat-feature-card">
+            <h3>Fast Communication</h3>
+            <p>Get faster replies from landlords or renters so you can make booking decisions more quickly.</p>
+            <a href="{% url 'chat_inbox' %}" class="btn-secondary">View Chats</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

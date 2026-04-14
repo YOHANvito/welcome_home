@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_class %}client-body{% endblock %}
+
+{% block content %}
+<style>
+    .saved-layout {
+        display: flex;
+        min-height: calc(100vh - 120px);
+        gap: 24px;
+    }
+
+    .sidebar {
+        width: 270px;
+        background: linear-gradient(180deg, #7c3aed, #4f46e5);
+        border-radius: 24px;
+        padding: 24px 18px;
+        box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+        color: #ffffff;
+        font-size: 30px;
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: #ffffff;
+        background: rgba(255,255,255,0.12);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: rgba(255,255,255,0.25);
+        transform: translateX(4px);
+    }
+
+    .saved-main {
+        flex: 1;
+    }
+
+    .saved-header {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--shadow);
+        padding: 28px;
+        border-radius: 22px;
+        margin-bottom: 24px;
+        border-left: 6px solid #8b5cf6;
+    }
+
+    .saved-header h1 {
+        font-size: 34px;
+        color: #6d28d9;
+        margin-bottom: 8px;
+    }
+
+    .saved-header p {
+        color: var(--muted);
+    }
+
+    .saved-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .saved-card {
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .saved-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .saved-card-content {
+        padding: 18px;
+    }
+
+    .saved-card h3 {
+        margin-bottom: 8px;
+        font-size: 22px;
+    }
+
+    .saved-location {
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .saved-price {
+        color: #6d28d9;
+        font-weight: 800;
+        font-size: 20px;
+        margin-bottom: 14px;
+    }
+
+    .saved-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        text-decoration: none;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: #6366f1;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #111827;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+    }
+
+    .empty-box {
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+
+    .empty-box p {
+        color: var(--muted);
+        margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .saved-layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="saved-layout">
+    <aside class="sidebar">
+        <h2>My Home</h2>
+        <a href="{% url 'dashboard_client' %}">Dashboard</a>
+        <a href="{% url 'property_list' %}">Browse Rentals</a>
+        <a href="{% url 'client_saved' %}" class="active">Saved Properties</a>
+        <a href="{% url 'renter_bookings' %}">Bookings</a>
+        <a href="{% url 'client_messages' %}">Messages</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'client_settings' %}">Settings</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <main class="saved-main">
+        <div class="saved-header">
+            <h1>Saved Properties</h1>
+            <p>Review the rentals you saved for later.</p>
+        </div>
+
+        {% if saved_properties %}
+            <div class="saved-grid">
+                {% for item in saved_properties %}
+                    <div class="saved-card">
+                        {% if item.property.image %}
+                            <img src="{{ item.property.image.url }}" alt="{{ item.property.title }}">
+                        {% endif %}
+
+                        <div class="saved-card-content">
+                            <h3>{{ item.property.title }}</h3>
+                            <p class="saved-location">{{ item.property.location }}</p>
+                            <p class="saved-price">₱{{ item.property.price }}</p>
+
+                            <div class="saved-actions">
+                                <a href="{% url 'property_detail' item.property.pk %}" class="btn-primary">
+                                    View Details
+                                </a>
+                                <a href="{% url 'unsave_property' item.property.pk %}" class="btn-danger">
+                                    Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <h2>No saved properties yet</h2>
+                <p>Start browsing rentals and save the ones you like.</p>
+                <br>
+                <a href="{% url 'property_list' %}" class="btn-primary">Browse Rentals</a>
+            </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

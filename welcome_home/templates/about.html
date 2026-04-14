@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+.about-wrap{
+    display:grid;
+    gap:24px;
+}
+
+.about-hero{
+    background:linear-gradient(135deg,#ffffff,#eef2ff,#f5f3ff);
+    padding:40px;
+    border-radius:24px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.05);
+}
+
+.about-badge{
+    display:inline-block;
+    background:#ede9fe;
+    color:#6d28d9;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:14px;
+}
+
+.about-hero h1{
+    font-size:42px;
+    margin-bottom:10px;
+    color:#111827;
+}
+
+.about-hero p{
+    font-size:16px;
+    color:#6b7280;
+    line-height:1.8;
+    max-width:900px;
+}
+
+.about-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+}
+
+.about-card{
+    background:white;
+    padding:28px;
+    border-radius:22px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.05);
+    transition:0.3s ease;
+}
+
+.about-card:hover{
+    transform:translateY(-5px);
+}
+
+.about-card h2,
+.about-card h3{
+    color:#111827;
+    margin-bottom:10px;
+}
+
+.about-card h2{
+    font-size:30px;
+}
+
+.about-card h3{
+    font-size:22px;
+    color:#4f46e5;
+}
+
+.about-card p{
+    color:#6b7280;
+    line-height:1.7;
+}
+
+.about-highlight{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    padding:32px;
+    border-radius:24px;
+    box-shadow:0 10px 24px rgba(99,102,241,0.22);
+}
+
+.about-highlight h2{
+    font-size:30px;
+    margin-bottom:12px;
+}
+
+.about-highlight p{
+    color:#eef2ff;
+    line-height:1.8;
+}
+
+.feature-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.feature-box{
+    background:white;
+    padding:22px;
+    border-radius:20px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.05);
+}
+
+.feature-box h4{
+    font-size:20px;
+    margin-bottom:8px;
+    color:#111827;
+}
+
+.feature-box p{
+    color:#6b7280;
+    line-height:1.6;
+}
+
+@media(max-width:768px){
+    .about-hero{
+        padding:26px;
+    }
+
+    .about-hero h1{
+        font-size:32px;
+    }
+
+    .about-card,
+    .about-highlight,
+    .feature-box{
+        padding:22px;
+    }
+}
+</style>
+
+<div class="about-wrap">
+
+    <section class="about-hero">
+        <span class="about-badge">About the Platform</span>
+        <h1>About Welcome Home</h1>
+        <p>
+            Welcome Home is a localized rental booking system created to help renters, landlords,
+            and administrators manage rental activities in a more organized and user-friendly way.
+            The platform focuses on rental spaces around <strong>Sampaloc, Manila (District 4)</strong>,
+            giving users access to local listings, booking tools, comments, map view, chat, and
+            smart property recommendations.
+        </p>
+    </section>
+
+    <div class="about-grid">
+        <div class="about-card">
+            <h3>For Renters</h3>
+            <p>
+                Renters can browse rental listings, check prices and locations, reserve available
+                spaces, post comments, and communicate with landlords directly through chat.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h3>For Landlords</h3>
+            <p>
+                Landlords can post and manage their listings, update rental details, upload property
+                images, and review booking requests from interested renters.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h3>For Admins</h3>
+            <p>
+                Admin users can monitor platform activity, review information, manage property records,
+                and help maintain a clean and secure rental system.
+            </p>
+        </div>
+    </div>
+
+    <div class="about-highlight">
+        <h2>What the system offers</h2>
+        <p>
+            Welcome Home combines property search, booking management, property comments, real-time
+            chat, landlord tools, and location-based browsing in one modern web platform. It is designed
+            to be simple, useful, and practical for students and renters looking for nearby housing in
+            Sampaloc, Manila.
+        </p>
+    </div>
+
+    <div class="feature-list">
+        <div class="feature-box">
+            <h4>Search and Browse</h4>
+            <p>Users can explore available rentals based on title, location, amenities, and other details.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Booking System</h4>
+            <p>Renters can send booking requests directly through the property page.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Map and Location</h4>
+            <p>Properties can be viewed with map support for easier location checking.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Comments and Chat</h4>
+            <p>Users can ask questions, leave comments, and communicate more efficiently.</p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
